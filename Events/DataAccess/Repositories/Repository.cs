@@ -35,11 +35,12 @@ public class Repository : IRepository<Models.Event> {
     public async Task<Event> GetByIdAsync(int id) {
         return _context.Set<Event>().Where(x=>x.Id == id).Include(c=>c.Company).Include(c=>c.Speaker).FirstOrDefault();
     }
-    public void UpdateAsync(Event entity)
+    public Task UpdateAsync(Event entity)
     {
        // _context.Set<T>().Attach(entity);
         _context.Entry(entity).State = EntityState.Modified;
         //_context.SaveChanges();
-        
+        return null;
+
     }
 }

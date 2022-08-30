@@ -99,22 +99,22 @@ builder.Services
 builder.Services.AddScoped<IRepository<Event>,Repository>();
 
 //builder.Services.AddTransient<IEventsService,EventsService>();
-builder.Services.AddTransient<IUsersService,UsersService>();
+builder.Services.AddTransient<ICheckingService,CheckingService>();
 builder.Services.AddTransient<IEventsService,EventsService>();
 builder.Services.AddTransient<IAuthService,AuthService>();
 builder.Services.AddTransient<IJwtService,JwtService>();
 builder.Services.AddTransient<IEventsService,EventsService>();
 
 
-builder.Services.AddAutoMapper(typeof(EventCreatingProfile), typeof(EventsMapper),typeof(AdminMapper),typeof(HospitalWorkerMapper));
+builder.Services.AddAutoMapper(typeof(EventCreatingProfile), typeof(EventsMapper),typeof(AdminMapper));
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     SeedData.Initialize(services);
     
-    var usersService = scope.ServiceProvider.GetRequiredService<IUsersService>();
-    await usersService
+    var checkingService = scope.ServiceProvider.GetRequiredService<ICheckingService>();
+    await checkingService
             .CreateAdminAsync(
                 new CreateAdminRequest
                 {

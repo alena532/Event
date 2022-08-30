@@ -28,13 +28,6 @@ public class AppDbContext : IdentityDbContext<User,Role,string>
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.Property(e => e.CompanyId)
-                .IsRequired(false);
-
-            entity.HasOne(e => e.Company)
-                .WithMany(u => u.Users)
-                .HasForeignKey(e => e.CompanyId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(e => e.Role)
                 .WithMany(e => e.Users)

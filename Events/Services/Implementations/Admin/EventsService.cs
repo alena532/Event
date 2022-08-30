@@ -11,13 +11,11 @@ namespace Events.Service;
 
 public class EventsService:IEventsService
 {
-    private readonly AppDbContext _context;
     private readonly IMapper _mapper;
     private readonly IRepository<Event> _repository;
-    private readonly IUsersService _usersService;
-    public EventsService(AppDbContext context,IMapper mapper,IRepository<Event> repository,IUsersService usersService)
+    private readonly ICheckingService _usersService;
+    public EventsService(IMapper mapper,IRepository<Event> repository,ICheckingService usersService)
     {
-        _context = context;
         _mapper = mapper;
         _repository = repository;
        _usersService = usersService;
@@ -31,11 +29,11 @@ public class EventsService:IEventsService
         
     }
     
-    public async Task<ICollection<GetEventResponse>> GetByIdAsync(int eventId)
+    public async Task<GetEventResponse> GetByIdAsync(int eventId)
     {
-        var entities = await _repository.GetByIdAsync(eventId);
+        var entity = await _repository.GetByIdAsync(eventId);
 
-        return _mapper.Map<ICollection<GetEventResponse>>(entities);
+        return _mapper.Map<GetEventResponse>(entity);
     }
 
     public async Task<ICollection<GetEventResponse>> GetByCompanyAsync(int companyId)
@@ -62,12 +60,10 @@ public class EventsService:IEventsService
         if (request.CompanyId <= 0 || request.SpeakerId <= 0) throw new BadHttpRequestException("Invalid Organization Id");
 
         var company = await _usersService.GetCompanyByCompanyIdAsync(request.CompanyId);
-        if (company == null)
-            throw new BadHttpRequestException("Invalid Company Id");
+        if (company == null) throw new BadHttpRequestException("Invalid Company Id");
 
         var speaker = await _usersService.GetSpeakerBySpeakerIdAsync(request.SpeakerId);
-        if (speaker == null)
-            throw new BadHttpRequestException("Invalid Speaker Id");
+        if (speaker == null) throw new BadHttpRequestException("Invalid Speaker Id");
 
         var entity = new Event()
         {
@@ -82,6 +78,30 @@ public class EventsService:IEventsService
         };
         Event res = await _repository.AddAsync(entity);
         return _mapper.Map<GetEventResponse>(res);
+    }
+
+    public async Task UpdateAsync(int id,EditEventRequest request)
+    {
+        Event ev =await _repository.GetByIdAsync(id);
+        var company = await _usersService.GetCompanyByCompanyIdAsync(request.CompanyId);
+        if (company == null) throw new BadHttpRequestException("Invalid Company Id");
+
+        var speaker = await _usersService.GetSpeakerBySpeakerIdAsync(request.SpeakerId);
+        if (speaker == null) throw new BadHttpRequestException("Invalid Speaker Id");
+
+
+        ev.Title = request.Title;
+        ev.Description = request.Description;
+        ev.Plan = request.Plan;
+        ev.Company = company;
+        ev.Speaker = speaker;
+        ev.Time = request.Time;
+        ev.Place = request.Place;
+        await _repository.UpdateAsync(ev);
+
+
+
+
     }
 
     

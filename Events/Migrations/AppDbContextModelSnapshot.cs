@@ -141,9 +141,6 @@ namespace Events.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("CompanyId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
@@ -201,8 +198,6 @@ namespace Events.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -343,19 +338,11 @@ namespace Events.Migrations
 
             modelBuilder.Entity("Events.Models.User", b =>
                 {
-                    b.HasOne("Events.Models.Company", "Company")
-                        .WithMany("Users")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Events.Models.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Company");
 
                     b.Navigation("Role");
                 });
@@ -414,8 +401,6 @@ namespace Events.Migrations
             modelBuilder.Entity("Events.Models.Company", b =>
                 {
                     b.Navigation("Events");
-
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Events.Models.Role", b =>

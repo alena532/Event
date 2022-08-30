@@ -29,7 +29,6 @@ public class JwtService:IJwtService
             new(ClaimTypes.Name, user.UserName),
             new("FirstName",user.FirstName),
             new(ClaimTypes.Surname, user.LastName),
-            new("CompanyId", user.CompanyId?.ToString() ?? string.Empty),
             new(ClaimTypes.Role,user.Role.Name)
         };
         var key = Encoding.ASCII.GetBytes(_jwtOptions.Key);

@@ -12,6 +12,6 @@ public interface IEventsService
     public Task DeleteAsync(int eventId);
     public Task<GetEventResponse> CreateAsync(CreateEventRequest request);
 
-    public  Task<ICollection<GetEventResponse>> GetByIdAsync(int eventId);
-    //public Task UpdateEventAsync(int eventId);
+    public  Task<GetEventResponse> GetByIdAsync(int eventId);
+    public Task UpdateAsync(int eventId,EditEventRequest request);
 }

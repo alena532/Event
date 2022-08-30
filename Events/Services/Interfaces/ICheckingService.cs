@@ -4,11 +4,9 @@ using Events.Models;
 
 namespace Events.Service.IService;
 
-public interface IUsersService
+public interface ICheckingService
 {
     Task<GetAdminResponse> CreateAdminAsync(CreateAdminRequest request);
-    Task<GetCompanyWorkerResponse> CreateCompanyWorkerAsync(CreateCompanyWorkerRequest request);
-    Task<ICollection<GetCompanyWorkerResponse>> GetCompanyWorkersAsync();
     Task<Company> GetCompanyByCompanyIdAsync(int companyId);
     Task<Speaker> GetSpeakerBySpeakerIdAsync(int speakerId);
 
