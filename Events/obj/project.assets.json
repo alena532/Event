@@ -5433,6 +5433,7 @@
     "net6.0": [
       "AutoMapper >= 11.0.1",
       "AutoMapper.Extensions.Microsoft.DependencyInjection >= 11.0.0",
+      "Microsoft.AspNet.WebApi.Core >= 5.2.7",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 6.0.8",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 6.0.8",
       "Microsoft.EntityFrameworkCore.Design >= 6.0.8",
@@ -5490,6 +5491,10 @@
           "AutoMapper.Extensions.Microsoft.DependencyInjection": {
             "target": "Package",
             "version": "[11.0.0, )"
+          },
+          "Microsoft.AspNet.WebApi.Core": {
+            "target": "Package",
+            "version": "[5.2.7, )"
           },
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
             "target": "Package",
