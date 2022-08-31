@@ -3,7 +3,7 @@ using Events.Common.Attributes;
 using Events.Contracts.Requests.Events;
 using Events.Contracts.Responses.Events;
 using Events.Service.IService;
-namespace Events.Controllers;
+namespace Events.Controllers.Admin;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -22,13 +22,10 @@ public class EventsController:ControllerBase
     public async Task<ActionResult<ICollection<GetEventResponse>>> GetAllAsync()
         =>Ok(await _eventsService.GetAllAsync());
     
-    
     [HttpGet("Company")]
     public async Task<ActionResult<ICollection<GetEventResponse>>> GetAllByCompanyAsync(int companyId) 
         => Ok(await _eventsService.GetByCompanyAsync(companyId));
-    
-    
-    
+
     [HttpGet("Id")]
     public async Task<ActionResult<GetEventResponse>> GetByIdAsync(int eventId)
         =>Ok(await _eventsService.GetByIdAsync(eventId));
@@ -51,8 +48,5 @@ public class EventsController:ControllerBase
     {
         await _eventsService.UpdateAsync(id, request);
         return Ok();
-
     }
-        
-
 }

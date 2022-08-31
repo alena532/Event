@@ -1,9 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Linq.Expressions;
 using Events.DBContext.Repositories.Base;
 using Events.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Events.DBContext.Repositories;
@@ -23,7 +21,6 @@ public class Repository : IRepository<Event> {
         return entity;
     }
     
-    
     public async Task DeleteAsync<Event>(Models.Event? entity)
     {
         var dbSet = _context.Set<Models.Event>();
@@ -42,21 +39,15 @@ public class Repository : IRepository<Event> {
         {
             query = query.Where(filter);
         }
-        
         return query;
     }
     
     public async Task<IReadOnlyList<Event>> GetAllAsync(Expression<Func<Event, bool>> filter = null)
-    {
-        return await GetQuearble(filter).ToListAsync();
-        
-    }
-    
+        => await GetQuearble(filter).ToListAsync();
+
     public async Task<Event> GetByIdAsync(int id)
-    {
-        return await _context.Set<Event>().Where(x => x.Id == id).Include(s=>s.Speaker).Include(s=>s.Company).FirstOrDefaultAsync();
-    }
-    
+        =>await _context.Set<Event>().Where(x => x.Id == id).Include(s=>s.Speaker).Include(s=>s.Company).FirstOrDefaultAsync();
+
     public async Task UpdateAsync(Event entity)
     {
         _context.Set<Event>().Attach(entity);

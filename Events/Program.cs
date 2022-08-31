@@ -1,7 +1,4 @@
-using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Events.ConfigurationOptions;
 using Events.Contracts.Requests.Users;
 using Events.DBContext;
@@ -11,16 +8,12 @@ using Events.Models;
 using Events.Profiles;
 using Events.Service;
 using Events.Service.IService;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
-using static System.Text.Encoding;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -82,14 +75,11 @@ builder.Services
     })
     .AddJwtBearer(options =>
     {
-        //options.SaveToken = true;
-        //options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
             ClockSkew = TimeSpan.Zero,
-            //ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtOptions.Issuer,
             ValidAudience = jwtOptions.Audience,
@@ -98,13 +88,12 @@ builder.Services
     });
 builder.Services.AddScoped<IRepository<Event>,Repository>();
 
-//builder.Services.AddTransient<IEventsService,EventsService>();
+builder.Services.AddTransient<ICreateService,CreateService>();
 builder.Services.AddTransient<ICheckingService,CheckingService>();
 builder.Services.AddTransient<IEventsService,EventsService>();
 builder.Services.AddTransient<IAuthService,AuthService>();
 builder.Services.AddTransient<IJwtService,JwtService>();
 builder.Services.AddTransient<IEventsService,EventsService>();
-
 
 builder.Services.AddAutoMapper(typeof(EventCreatingProfile), typeof(EventsMapper),typeof(AdminMapper));
 var app = builder.Build();
@@ -113,8 +102,8 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     SeedData.Initialize(services);
     
-    var checkingService = scope.ServiceProvider.GetRequiredService<ICheckingService>();
-    await checkingService
+    var createService = scope.ServiceProvider.GetRequiredService<ICreateService>();
+    await createService
             .CreateAdminAsync(
                 new CreateAdminRequest
                 {
@@ -125,8 +114,7 @@ using (var scope = app.Services.CreateScope())
                     Password = "123@Qa123"
                 }
             );
-
-
+    
 }
 
 if (app.Environment.IsDevelopment())
@@ -145,7 +133,6 @@ app.UseRouting();
 app.UseAuthentication();
 
 app.UseAuthorization();
-
 
 
 app.MapControllerRoute(

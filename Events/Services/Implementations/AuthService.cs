@@ -1,14 +1,11 @@
 using AutoMapper;
 using Events.Contracts.Requests.Auth;
-using Events.Contracts.Requests.Events;
 using Events.Contracts.Responses.Auth;
-using Events.Contracts.Responses.Events;
 using Events.Contracts.Responses.Users;
 using Events.DBContext;
 using Events.Models;
 using Events.Service.IService;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Events.Service;
@@ -29,7 +26,6 @@ public class AuthService:IAuthService
 
     public async Task<LoginResponse> LoginAsync(LoginRequest request)
     {
-
         var user = await _userManager.FindByNameAsync(request.UserName);
         
         if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
@@ -47,7 +43,6 @@ public class AuthService:IAuthService
         };
 
         return loginResponse;
-
     }
 
 }

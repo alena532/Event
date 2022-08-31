@@ -6,7 +6,6 @@ namespace Events.Service.IService;
 
 public interface ICheckingService
 {
-    Task<GetAdminResponse> CreateAdminAsync(CreateAdminRequest request);
     Task<Company> GetCompanyByIdAsync(int companyId);
     Task<Speaker> GetSpeakerByIdAsync(int speakerId);
 
