@@ -95,7 +95,7 @@ builder.Services.AddTransient<IAuthService,AuthService>();
 builder.Services.AddTransient<IJwtService,JwtService>();
 builder.Services.AddTransient<IEventsService,EventsService>();
 
-builder.Services.AddAutoMapper(typeof(EventCreatingProfile), typeof(EventsMapper),typeof(AdminMapper));
+builder.Services.AddAutoMapper( typeof(EventsMapper),typeof(AdminMapper));
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {

@@ -21,7 +21,7 @@ public class Repository : IRepository<Event> {
         return entity;
     }
     
-    public async Task DeleteAsync<Event>(Models.Event? entity)
+    public async Task DeleteAsync(Models.Event entity)
     {
         var dbSet = _context.Set<Models.Event>();
         if (_context.Entry(entity).State == EntityState.Detached)
@@ -48,11 +48,13 @@ public class Repository : IRepository<Event> {
     public async Task<Event> GetByIdAsync(int id)
         =>await _context.Set<Event>().Where(x => x.Id == id).Include(s=>s.Speaker).Include(s=>s.Company).FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(Event entity)
+    public async Task<Event> UpdateAsync(Event entity)
     {
         _context.Set<Event>().Attach(entity);
         _context.Entry(entity).State = EntityState.Modified;
-        SaveAsync();
+        await SaveAsync();
+
+        return await GetByIdAsync(entity.Id);
     }
     
     public Task SaveAsync()

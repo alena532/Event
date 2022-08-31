@@ -22,16 +22,16 @@ public class EventsController:ControllerBase
     public async Task<ActionResult<ICollection<GetEventResponse>>> GetAllAsync()
         =>Ok(await _eventsService.GetAllAsync());
     
-    [HttpGet("Company")]
+    [HttpGet("company/{companyId:int}")]
     public async Task<ActionResult<ICollection<GetEventResponse>>> GetAllByCompanyAsync(int companyId) 
         => Ok(await _eventsService.GetByCompanyAsync(companyId));
 
-    [HttpGet("Id")]
-    public async Task<ActionResult<GetEventResponse>> GetByIdAsync(int eventId)
-        =>Ok(await _eventsService.GetByIdAsync(eventId));
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<GetEventResponse>> GetByIdAsync(int id)
+        =>Ok(await _eventsService.GetByIdAsync(id));
     
     
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
         await _eventsService.DeleteAsync(id);
@@ -43,7 +43,8 @@ public class EventsController:ControllerBase
     public async Task<ActionResult<GetEventResponse>> CreateAsync([FromBody]CreateEventRequest request)
         => Ok(await _eventsService.CreateAsync(request));
 
-    [HttpPut]
+    [HttpPut("{id:int}")]
+
     public async Task<ActionResult> UpdateAsync(int id, [FromBody]EditEventRequest request)
     {
         await _eventsService.UpdateAsync(id, request);

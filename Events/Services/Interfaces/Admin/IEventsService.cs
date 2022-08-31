@@ -13,5 +13,5 @@ public interface IEventsService
     public Task<GetEventResponse> CreateAsync(CreateEventRequest request);
 
     public  Task<GetEventResponse> GetByIdAsync(int eventId);
-    public Task UpdateAsync(int eventId,EditEventRequest request);
+    public Task<GetEventResponse> UpdateAsync(int eventId,EditEventRequest request);
 }
