@@ -13,7 +13,7 @@ public class EventsController:ControllerBase
 {
     private readonly IEventsService _eventsService;
 
-    public EventsController( IEventsService eventsService)
+    public EventsController(IEventsService eventsService)
     {
         _eventsService = eventsService;
     }
@@ -28,6 +28,7 @@ public class EventsController:ControllerBase
         => Ok(await _eventsService.GetByCompanyAsync(companyId));
     
     
+    
     [HttpGet("Id")]
     public async Task<ActionResult<GetEventResponse>> GetByIdAsync(int eventId)
         =>Ok(await _eventsService.GetByIdAsync(eventId));
@@ -37,16 +38,16 @@ public class EventsController:ControllerBase
     public async Task<IActionResult> DeleteAsync(int id)
     {
         await _eventsService.DeleteAsync(id);
-       return Ok();
+        return Ok();
     }
     
-    [HttpPost("Create")]
+    [HttpPost("")]
     [ValidationModel]
     public async Task<ActionResult<GetEventResponse>> CreateAsync([FromBody]CreateEventRequest request)
         => Ok(await _eventsService.CreateAsync(request));
 
     [HttpPut]
-    public async Task<ActionResult> UpdateAsync(int id, [FromBody] EditEventRequest request)
+    public async Task<ActionResult> UpdateAsync(int id, [FromBody]EditEventRequest request)
     {
         await _eventsService.UpdateAsync(id, request);
         return Ok();

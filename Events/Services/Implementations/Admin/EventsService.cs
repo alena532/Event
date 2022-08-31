@@ -43,7 +43,7 @@ public class EventsService:IEventsService
         Company company =await  _checkService.GetCompanyByIdAsync(companyId);
         if (company == null)
         {
-            throw new BadHttpRequestException("Invalid Event Id");
+            throw new BadHttpRequestException("Invalid Company Id");
         }
 
         var entities = await _repository.GetAllAsync(
@@ -88,20 +88,12 @@ public class EventsService:IEventsService
         var entity = await _repository.GetByIdAsync(id);
         if(entity == null) throw new BadHttpRequestException("Invalid Event Id");
         
-        var company = await _checkService.GetCompanyByIdAsync(request.CompanyId);
-        if (company == null) throw new BadHttpRequestException("Invalid Company Id");
-
-        var speaker = await _checkService.GetSpeakerByIdAsync(request.SpeakerId);
-        if (speaker == null) throw new BadHttpRequestException("Invalid Speaker Id");
-
-
         entity.Title = request.Title;
         entity.Description = request.Description;
         entity.Plan = request.Plan;
-        entity.Company = company;
-        entity.Speaker = speaker;
         entity.Time = request.Time;
         entity.Place = request.Place;
+        
         await _repository.UpdateAsync(entity);
 
     }

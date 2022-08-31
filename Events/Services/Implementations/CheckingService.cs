@@ -43,23 +43,15 @@ public class CheckingService:ICheckingService
 
     public async Task<Company> GetCompanyByIdAsync(int companyId)
     {
-        var entity = await _context.Companies.FindAsync(companyId);
-        if (entity != null) return entity;
-        return null;
+        return await _context.Companies.FindAsync(companyId);
     }
     
     public async Task<Speaker> GetSpeakerByIdAsync(int speakerId)
     {
-        var entity = await _context.Speakers.FindAsync(speakerId);
-        if (entity != null) return entity;
-        return null;
+        return await _context.Speakers.FindAsync(speakerId);
+        
     }
     
-    public async Task<Event> GetEventByIdAsync(int eventId)
-    {
-        var entity = await _context.Events.FindAsync(eventId);
-        if (entity != null) return entity;
-        return null;
-    }
+    
     
 }

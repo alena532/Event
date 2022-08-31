@@ -59,8 +59,6 @@ public class Repository : IRepository<Event> {
     
     public async Task UpdateAsync(Event entity)
     {
-        if (entity == null) throw new ArgumentNullException();
-        
         _context.Set<Event>().Attach(entity);
         _context.Entry(entity).State = EntityState.Modified;
         SaveAsync();
