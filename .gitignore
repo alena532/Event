@@ -228,8 +228,7 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
-
-.idea/.idea.Events/.idea
+*/.idea
 
 # System Files
 .DS_Store
