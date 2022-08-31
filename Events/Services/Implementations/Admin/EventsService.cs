@@ -13,12 +13,12 @@ public class EventsService:IEventsService
 {
     private readonly IMapper _mapper;
     private readonly IRepository<Event> _repository;
-    private readonly ICheckingService _usersService;
-    public EventsService(IMapper mapper,IRepository<Event> repository,ICheckingService usersService)
+    private readonly ICheckingService _checkService;
+    public EventsService(IMapper mapper,IRepository<Event> repository,ICheckingService checkService)
     {
         _mapper = mapper;
         _repository = repository;
-       _usersService = usersService;
+       _checkService = checkService;
     }
 
     public async Task<ICollection<GetEventResponse>> GetAllAsync()
@@ -26,11 +26,11 @@ public class EventsService:IEventsService
         var entities = await _repository.GetAllAsync();
 
         return _mapper.Map<ICollection<GetEventResponse>>(entities);
-        
     }
     
     public async Task<GetEventResponse> GetByIdAsync(int eventId)
-    {
+    {   
+        if(eventId <= 0) throw new BadHttpRequestException("Invalid Event Id");
         var entity = await _repository.GetByIdAsync(eventId);
 
         return _mapper.Map<GetEventResponse>(entity);
@@ -38,7 +38,12 @@ public class EventsService:IEventsService
 
     public async Task<ICollection<GetEventResponse>> GetByCompanyAsync(int companyId)
     {
-        if (companyId <= 0) throw new BadHttpRequestException("Invalid Organization Id");
+        if (companyId <= 0) throw new BadHttpRequestException("Invalid Company Id");
+        Company company =await  _checkService.GetCompanyByIdAsync(companyId);
+        if (company == null)
+        {
+            throw new BadHttpRequestException("Invalid Event Id");
+        }
 
         var entities = await _repository.GetAllAsync(
             x => x.CompanyId == companyId
@@ -46,23 +51,26 @@ public class EventsService:IEventsService
 
         return _mapper.Map<ICollection<GetEventResponse>>(entities);
     }
-    public async Task DeleteAsync(int eventId)
+    public async Task DeleteAsync(int id)
     {
-        if (eventId <= 0) throw new BadHttpRequestException("Invalid Company Id");
-        Event res = await _repository.GetByIdAsync(eventId);
+        if (id <= 0) throw new BadHttpRequestException("Invalid Event Id");
+        Event ev = await _checkService.GetEventByIdAsync(id);
+        if (ev == null)
+        {
+            throw new BadHttpRequestException("Invalid Event Id");
+        }
+        await _repository.DeleteAsync<Event>(ev);
         
-        if (res == null) throw new BadHttpRequestException("Invalid Event Id");
-        await _repository.DeleteAsync(res);
     }
     
     public async Task<GetEventResponse> CreateAsync(CreateEventRequest request)
     {
-        if (request.CompanyId <= 0 || request.SpeakerId <= 0) throw new BadHttpRequestException("Invalid Organization Id");
+        if (request.CompanyId <= 0 || request.SpeakerId <= 0) throw new BadHttpRequestException("Invalid Company or Speaker Id");
 
-        var company = await _usersService.GetCompanyByCompanyIdAsync(request.CompanyId);
+        var company = await _checkService.GetCompanyByIdAsync(request.CompanyId);
         if (company == null) throw new BadHttpRequestException("Invalid Company Id");
 
-        var speaker = await _usersService.GetSpeakerBySpeakerIdAsync(request.SpeakerId);
+        var speaker = await _checkService.GetSpeakerByIdAsync(request.SpeakerId);
         if (speaker == null) throw new BadHttpRequestException("Invalid Speaker Id");
 
         var entity = new Event()
@@ -82,11 +90,15 @@ public class EventsService:IEventsService
 
     public async Task UpdateAsync(int id,EditEventRequest request)
     {
-        Event ev =await _repository.GetByIdAsync(id);
-        var company = await _usersService.GetCompanyByCompanyIdAsync(request.CompanyId);
+        Event ev = await  _checkService.GetEventByIdAsync(id);
+        if (ev == null)
+        {
+            throw new BadHttpRequestException("Invalid Event Id");
+        }
+        var company = await _checkService.GetCompanyByIdAsync(request.CompanyId);
         if (company == null) throw new BadHttpRequestException("Invalid Company Id");
 
-        var speaker = await _usersService.GetSpeakerBySpeakerIdAsync(request.SpeakerId);
+        var speaker = await _checkService.GetSpeakerByIdAsync(request.SpeakerId);
         if (speaker == null) throw new BadHttpRequestException("Invalid Speaker Id");
 
 
@@ -98,9 +110,6 @@ public class EventsService:IEventsService
         ev.Time = request.Time;
         ev.Place = request.Place;
         await _repository.UpdateAsync(ev);
-
-
-
 
     }
 

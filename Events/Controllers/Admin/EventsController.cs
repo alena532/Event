@@ -42,11 +42,16 @@ public class EventsController:ControllerBase
     
     [HttpPost("Create")]
     [ValidationModel]
-    public async Task<ActionResult<GetEventResponse>> CreateAsync(CreateEventRequest request)
+    public async Task<ActionResult<GetEventResponse>> CreateAsync([FromBody]CreateEventRequest request)
         => Ok(await _eventsService.CreateAsync(request));
 
-  //  [HttpPut]
-   // public async Task<ActionResult<GetEventResponse>> UpdateAsync(int id,EditEventRequest request)
-   //     => Ok(await _eventsService.EditAsync(id,request));
+    [HttpPut]
+    public async Task<ActionResult> UpdateAsync(int id, [FromBody] EditEventRequest request)
+    {
+        await _eventsService.UpdateAsync(id, request);
+        return Ok();
+
+    }
+        
 
 }

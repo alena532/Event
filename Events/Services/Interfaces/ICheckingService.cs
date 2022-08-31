@@ -7,7 +7,8 @@ namespace Events.Service.IService;
 public interface ICheckingService
 {
     Task<GetAdminResponse> CreateAdminAsync(CreateAdminRequest request);
-    Task<Company> GetCompanyByCompanyIdAsync(int companyId);
-    Task<Speaker> GetSpeakerBySpeakerIdAsync(int speakerId);
+    Task<Company> GetCompanyByIdAsync(int companyId);
+    Task<Speaker> GetSpeakerByIdAsync(int speakerId);
+    Task<Event> GetEventByIdAsync(int eventId);
 
 }

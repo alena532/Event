@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using Events.DBContext.Repositories.Base;
@@ -7,40 +8,82 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Events.DBContext.Repositories;
 
-public class Repository : IRepository<Models.Event> {
+public class Repository : IRepository<Event> {
+    
     protected readonly AppDbContext _context;
     
     public Repository(AppDbContext context)
     {
         _context = context;
     }
-    public async Task<Models.Event> AddAsync(Models.Event entity) {
-        await _context.Set<Models.Event>().AddAsync(entity);
-        await _context.SaveChangesAsync();
+    
+    public async Task<Event> AddAsync(Event entity) {
+        await _context.Set<Event>().AddAsync(entity);
         return entity;
     }
-    public async Task DeleteAsync(Event entity) {
-        _context.Set<Event>().Remove(entity);
-        await _context.SaveChangesAsync();
+
+   /* public async Task DeleteAsync<Event>(int id) 
+    {
+        var entity =  _context.Set<Models.Event>().Where(x=>x.Id==id).FirstOrDefault();
+        if (entity != null)
+        {
+            await DeleteAsync<Event>(entity);
+        }
+        else
+        {
+            throw new BadHttpRequestException("invalidId");
+        }
+        
     }
-    public async Task<IReadOnlyList<Event>> GetAllAsync(Expression<Func<Event, bool>> filter = null) {
+    */
+    
+    public async Task DeleteAsync<Event>(Models.Event? entity)
+    {
+        var dbSet = _context.Set<Models.Event>();
+        if (_context.Entry(entity).State == EntityState.Detached)
+        {
+            dbSet.Attach(entity);
+        }
+        dbSet.Remove(entity);
+    }
+    
+    public IQueryable<Event> GetQuearble(Expression<Func<Event, bool>> filter) 
+    {
+        IQueryable<Event> query = _context.Set<Event>().Include(c => c.Company).Include(c => c.Speaker);
         if (filter != null)
         {
-            IQueryable<Event> query = _context.Set<Event>();
             query = query.Where(filter);
-            return await query.Include(c=>c.Company).Include(c=>c.Speaker).ToListAsync();
         }
-        return await _context.Set<Event>().Include(c=>c.Company).Include(c=>c.Speaker).ToListAsync();
+        return query;
     }
-    public async Task<Event> GetByIdAsync(int id) {
-        return _context.Set<Event>().Where(x=>x.Id == id).Include(c=>c.Company).Include(c=>c.Speaker).FirstOrDefault();
-    }
-    public Task UpdateAsync(Event entity)
+    
+    public async Task<IReadOnlyList<Event>> GetAllAsync(Expression<Func<Event, bool>> filter = null)
     {
-       // _context.Set<T>().Attach(entity);
+        return await GetQuearble(filter).ToListAsync();
+    }
+    
+    public async Task<Event> GetByIdAsync(int id)
+    {
+        return await _context.Set<Event>().FindAsync(id);
+    }
+    
+    public async Task UpdateAsync(Event entity)
+    {
+        if (entity == null) throw new ArgumentNullException();
+        
+        _context.Set<Event>().Attach(entity);
         _context.Entry(entity).State = EntityState.Modified;
-        //_context.SaveChanges();
-        return null;
-
+    }
+    
+    public Task SaveAsync()
+    {
+        try
+        {
+            return  _context.SaveChangesAsync();
+        }
+        catch (ValidationException e)
+        {
+            throw new ValidationException(e.Message, e.InnerException);
+        }
     }
 }
