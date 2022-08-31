@@ -3,7 +3,7 @@ using Events.Contracts.Responses.Users;
 
 namespace Events.Service.IService;
 
-public interface ICreateService
+public interface IUsersService
 {
     Task<GetAdminResponse> CreateAdminAsync(CreateAdminRequest request);
 }

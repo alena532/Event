@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Events.Service;
 
-public class CreateService:ICreateService
+public class UsersService:IUsersService
 {
     private readonly UserManager<User> _userManager;
     private readonly IMapper _mapper;
     private readonly AppDbContext _context;
-    public CreateService(UserManager<User> userManager,AppDbContext context,IMapper mapper)
+    public UsersService(UserManager<User> userManager,AppDbContext context,IMapper mapper)
     {
         _userManager = userManager;
         _context = context;

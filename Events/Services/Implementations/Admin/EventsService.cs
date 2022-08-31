@@ -1,7 +1,6 @@
 using AutoMapper;
 using Events.Contracts.Requests.Events;
 using Events.Contracts.Responses.Events;
-using Events.DBContext;
 using Events.DBContext.Repositories.Base;
 using Events.Models;
 using Events.Service.IService;
@@ -13,12 +12,14 @@ public class EventsService:IEventsService
 {
     private readonly IMapper _mapper;
     private readonly IRepository<Event> _repository;
-    private readonly ICheckingService _checkService;
-    public EventsService(IMapper mapper,IRepository<Event> repository,ICheckingService checkService)
+    private readonly ISpeakersService _speakersService;
+    private readonly ICompaniesService _companyService;
+    public EventsService(IMapper mapper,IRepository<Event> repository,ISpeakersService speakersService,ICompaniesService companyService)
     {
         _mapper = mapper;
         _repository = repository;
-       _checkService = checkService;
+       _speakersService = speakersService;
+       _companyService = companyService;
     }
 
     public async Task<ICollection<GetEventResponse>> GetAllAsync()
@@ -33,18 +34,14 @@ public class EventsService:IEventsService
 
         var entity = await _repository.GetByIdAsync(eventId);
         if(entity == null) throw new BadHttpRequestException("Invalid Event Id");
-            
-
+        
         return _mapper.Map<GetEventResponse>(entity);
     }
 
     public async Task<ICollection<GetEventResponse>> GetByCompanyAsync(int companyId)
     {
-        Company company =await  _checkService.GetCompanyByIdAsync(companyId);
-        if (company == null)
-        {
-            throw new BadHttpRequestException("Invalid Company Id");
-        }
+        var company = await _companyService.GetByIdAsync(companyId);
+        if (company == null) throw new BadHttpRequestException("Invalid Company Id");
 
         var entities = await _repository.GetAllAsync(
             x => x.CompanyId == companyId
@@ -62,10 +59,10 @@ public class EventsService:IEventsService
     
     public async Task<GetEventResponse> CreateAsync(CreateEventRequest request)
     {
-        var company = await _checkService.GetCompanyByIdAsync(request.CompanyId);
+        var company = await _companyService.GetByIdAsync(request.CompanyId);
         if (company == null) throw new BadHttpRequestException("Invalid Company Id");
 
-        var speaker = await _checkService.GetSpeakerByIdAsync(request.SpeakerId);
+        var speaker = await _speakersService.GetByIdAsync(request.SpeakerId);
         if (speaker == null) throw new BadHttpRequestException("Invalid Speaker Id");
 
         var entity = new Event()

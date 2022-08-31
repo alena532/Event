@@ -88,12 +88,13 @@ builder.Services
     });
 builder.Services.AddScoped<IRepository<Event>,Repository>();
 
-builder.Services.AddTransient<ICreateService,CreateService>();
-builder.Services.AddTransient<ICheckingService,CheckingService>();
+builder.Services.AddTransient<IUsersService,UsersService>();
+builder.Services.AddTransient<ISpeakersService,SpeakersService>();
 builder.Services.AddTransient<IEventsService,EventsService>();
 builder.Services.AddTransient<IAuthService,AuthService>();
 builder.Services.AddTransient<IJwtService,JwtService>();
 builder.Services.AddTransient<IEventsService,EventsService>();
+builder.Services.AddTransient<ICompaniesService,CompaniesService>();
 
 builder.Services.AddAutoMapper( typeof(EventsMapper),typeof(AdminMapper));
 var app = builder.Build();
@@ -102,7 +103,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     SeedData.Initialize(services);
     
-    var createService = scope.ServiceProvider.GetRequiredService<ICreateService>();
+    var createService = scope.ServiceProvider.GetRequiredService<IUsersService>();
     await createService
             .CreateAdminAsync(
                 new CreateAdminRequest
