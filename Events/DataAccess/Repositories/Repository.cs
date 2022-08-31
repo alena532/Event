@@ -19,23 +19,10 @@ public class Repository : IRepository<Event> {
     
     public async Task<Event> AddAsync(Event entity) {
         await _context.Set<Event>().AddAsync(entity);
+        await SaveAsync();
         return entity;
     }
-
-   /* public async Task DeleteAsync<Event>(int id) 
-    {
-        var entity =  _context.Set<Models.Event>().Where(x=>x.Id==id).FirstOrDefault();
-        if (entity != null)
-        {
-            await DeleteAsync<Event>(entity);
-        }
-        else
-        {
-            throw new BadHttpRequestException("invalidId");
-        }
-        
-    }
-    */
+    
     
     public async Task DeleteAsync<Event>(Models.Event? entity)
     {
@@ -45,6 +32,7 @@ public class Repository : IRepository<Event> {
             dbSet.Attach(entity);
         }
         dbSet.Remove(entity);
+        await SaveAsync();
     }
     
     public IQueryable<Event> GetQuearble(Expression<Func<Event, bool>> filter) 
@@ -54,17 +42,19 @@ public class Repository : IRepository<Event> {
         {
             query = query.Where(filter);
         }
+        
         return query;
     }
     
     public async Task<IReadOnlyList<Event>> GetAllAsync(Expression<Func<Event, bool>> filter = null)
     {
         return await GetQuearble(filter).ToListAsync();
+        
     }
     
     public async Task<Event> GetByIdAsync(int id)
     {
-        return await _context.Set<Event>().FindAsync(id);
+        return await _context.Set<Event>().Where(x => x.Id == id).Include(s=>s.Speaker).Include(s=>s.Company).FirstOrDefaultAsync();
     }
     
     public async Task UpdateAsync(Event entity)
@@ -73,6 +63,7 @@ public class Repository : IRepository<Event> {
         
         _context.Set<Event>().Attach(entity);
         _context.Entry(entity).State = EntityState.Modified;
+        SaveAsync();
     }
     
     public Task SaveAsync()
