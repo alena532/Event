@@ -27,7 +27,8 @@ public class UsersService:IUsersService
         
         User user = new()
         {
-            FirstName = request.FirstName, LastName = request.LastName,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
             UserName = request.UserName,
             Role = userRole,
         };

@@ -1,0 +1,36 @@
+
+<button type="button" [routerLink]="['create']">Create new event</button>
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th scope="col">Title</th>
+    <th scope="col">Description</th>
+    <th scope="col">Plan</th>
+    <th scope="col">Date</th>
+    <th scope="col">Time</th>
+    <th scope="col">Place</th>
+    <th scope="col">Company</th>
+    <th scope="col">Speaker</th>
+    <th scope="col">Actions</th>
+
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let event of this.events">
+    <td>{{ event.title }}</td>
+    <td>{{ event.description }}</td>
+    <td>{{ event.plan}}</td>
+    <td>{{ event.date }}</td>
+    <td>{{ event.time  }}</td>
+    <td>{{ event.place }}</td>
+    <td>{{ event.company}}</td>
+    <td>{{ event.speaker}}</td>
+    <td style="display:flex">
+      <button type="button" [routerLink]="['update',event.id]" class="btn btn-success">Update</button>
+      <span style="width: 10px"></span>
+      <button type="button" (click)="deleteEvent(event.id)" class="btn btn-danger">Delete</button>
+    </td>
+
+  </tr>
+  </tbody>
+</table>

@@ -8,10 +8,12 @@ using Microsoft.Extensions.Options;
 using Events.Contracts.Requests.Auth;
 using Events.Contracts.Responses.Auth;
 using Events.Service.IService;
+using Microsoft.AspNetCore.Cors;
 
 namespace Events.Controllers;
 
 [ApiController]
+[EnableCors("_myAllowSpecificOrigins")]
 [AllowAnonymous]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
@@ -28,7 +30,10 @@ public class AuthController : ControllerBase
         _authService = authService ?? throw new ArgumentNullException(nameof(authService));
     }
     
+    
     [HttpPost("Login")]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(200)]
     public async Task<ActionResult<LoginResponse>> LoginAsync([FromBody] LoginRequest request)
     {
         var result = await _authService.LoginAsync(request);

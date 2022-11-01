@@ -1,0 +1,99 @@
+<div class="col-md-6 offset-md-3 mt-5">
+
+  <div class="card">
+    <h4 class="card-header">Create event</h4>
+    <div class="card-body">
+      <form [formGroup]="eventCreateForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" formControlName="title" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['title'].errors }" />
+          <div *ngIf="submitted && f['title'].errors" class="invalid-feedback">
+            <div *ngIf="f['title'].errors['required']">Title is required</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" formControlName="description" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['description'].errors }" />
+          <div *ngIf="submitted && f['description'].errors" class="invalid-feedback">
+            <div *ngIf="f['description'].errors['description']">Description is required</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Plan</label>
+          <input type="text" formControlName="plan" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['plan'].errors }" />
+          <div *ngIf="submitted && f['plan'].errors" class="invalid-feedback">
+            <div *ngIf="f['plan'].errors['required']">Plan is required</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Speaker</label>
+          <select
+            class="custom-select mb-3"
+            formControlName="speakerId"
+            [ngClass]="{ 'is-invalid': submitted && f['speakerId'].errors }"
+          >
+            <option value="">Choose Speaker</option>
+            <option *ngFor="let speaker of speakers" [ngValue]="speaker.id">
+              {{ speaker.firstName + speaker.lastName }}
+            </option>
+          </select>
+          <div *ngIf="submitted && f['speakerId'].errors" class="invalid-feedback">
+            <div *ngIf="f['speakerId'].errors['required']">Speaker is required</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Company</label>
+          <select
+            class="custom-select mb-3"
+            formControlName="companyId"
+            [ngClass]="{ 'is-invalid': submitted && f['companyId'].errors }"
+          >
+            <option value="">Choose Speaker</option>
+            <option *ngFor="let company of companies" [ngValue]="company.id">
+              {{ company.name }}
+            </option>
+          </select>
+          <div *ngIf="submitted && f['companyId'].errors" class="invalid-feedback">
+            <div *ngIf="f['companyId'].errors['required']">Company is required</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" formControlName="date" value="{{ currentTime | date:'yyyy-MM-dd' }}" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['date'].errors }" />
+          <div *ngIf="submitted && f['date'].errors" class="invalid-feedback">
+            <div *ngIf="f['date'].errors['required']">Date is required</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Time</label>
+          <input type="time" formControlName="time" value="{{ currentTime | date:'shortTime'}}" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['time'].errors }" />
+          <div *ngIf="submitted && f['time'].errors" class="invalid-feedback">
+            <div *ngIf="f['time'].errors['required']">Time is required</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Place</label>
+          <input type="text" formControlName="place" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['place'].errors }" />
+          <div *ngIf="submitted && f['place'].errors" class="invalid-feedback">
+            <div *ngIf="f['place'].errors['required']">Place is required</div>
+          </div>
+        </div>
+
+        <div>
+          <button  class="btn btn-primary">
+            Create
+          </button>
+        </div>
+        <div style="height:10px">
+        </div>
+        <div>
+          <button type="button" [routerLink]="['..']" class="btn btn-primary">
+            Back
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+

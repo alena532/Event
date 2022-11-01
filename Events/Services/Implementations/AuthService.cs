@@ -33,6 +33,8 @@ public class AuthService:IAuthService
             throw new BadHttpRequestException("Invalid username and (or) password");
         }
 
+       // var roles = await _userManager.GetRolesAsync(user);
+
        User userWithRole = _context.Users.Where(x => x.Id == user.Id).Include(r => r.Role).FirstOrDefault();
         
         var token = _jwtService.GenerateJwtTokenAsync(userWithRole);

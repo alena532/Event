@@ -19,10 +19,16 @@ public class JwtService:IJwtService
         _jwtOptions = jwtOptions?.Value ?? throw new ArgumentNullException(nameof(jwtOptions));
     }
 
-    public string GenerateJwtTokenAsync(User user)
+    private SigningCredentials GetSigningCredentials()
     {
-        if (user == null) throw new ArgumentNullException(nameof(user));
-        
+        var key = Encoding.ASCII.GetBytes(_jwtOptions.Key);
+        var secret = new SymmetricSecurityKey(key);
+        return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256Signature,
+            SecurityAlgorithms.Sha256Digest);
+    }
+
+    private List<Claim> GetClaims(User user)
+    {
         var claims = new List<Claim>
         {
             new (ClaimTypes.NameIdentifier, user.Id),
@@ -31,17 +37,19 @@ public class JwtService:IJwtService
             new(ClaimTypes.Surname, user.LastName),
             new(ClaimTypes.Role,user.Role.Name)
         };
-        var key = Encoding.ASCII.GetBytes(_jwtOptions.Key);
+        return claims;
+    }
+
+    public string GenerateJwtTokenAsync(User user)
+    {
+        if (user == null) throw new ArgumentNullException(nameof(user));
+        
         var token = new JwtSecurityToken(_jwtOptions.Issuer,
             _jwtOptions.Audience,
-            claims,
+            GetClaims(user),
             null,
             expires: DateTime.Now.AddMinutes(120),
-            signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(key),
-                SecurityAlgorithms.HmacSha256Signature,
-                SecurityAlgorithms.Sha256Digest
-            ));
+            signingCredentials: GetSigningCredentials());
         return new JwtSecurityTokenHandler().WriteToken(token);
 
     }

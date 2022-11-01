@@ -29,11 +29,11 @@ public class EventsService:IEventsService
         return _mapper.Map<ICollection<GetEventResponse>>(entities);
     }
     
-    public async Task<GetEventResponse> GetByIdAsync(int eventId)
+    public async Task<GetEventResponse> GetByIdAsync(int id)
     {
 
-        var entity = await _repository.GetByIdAsync(eventId);
-        if(entity == null) throw new BadHttpRequestException("Invalid Event Id");
+        var entity = await _repository.GetByIdAsync(id);
+       // if(entity == null) throw new BadHttpRequestException("Invalid Event Id");
         
         return _mapper.Map<GetEventResponse>(entity);
     }
@@ -44,7 +44,7 @@ public class EventsService:IEventsService
         if (company == null) throw new BadHttpRequestException("Invalid Company Id");
 
         var entities = await _repository.GetAllAsync(
-            x => x.CompanyId == companyId
+            x => x.CompanyId.Equals(companyId)
         );
 
         return _mapper.Map<ICollection<GetEventResponse>>(entities);
@@ -52,7 +52,7 @@ public class EventsService:IEventsService
     public async Task DeleteAsync(int id)
     {
         var entity = await _repository.GetByIdAsync(id);
-        if(entity == null) throw new BadHttpRequestException("Invalid Event Id");
+        //if(entity == null) throw new BadHttpRequestException("Invalid Event Id");
 
         await _repository.DeleteAsync(entity);
     }
@@ -83,7 +83,7 @@ public class EventsService:IEventsService
     public async Task<GetEventResponse> UpdateAsync(int id,EditEventRequest request)
     {
         var entity = await _repository.GetByIdAsync(id);
-        if(entity == null) throw new BadHttpRequestException("Invalid Event Id");
+        //if(entity == null) throw new BadHttpRequestException("Invalid Event Id");
         
         entity.Title = request.Title;
         entity.Description = request.Description;

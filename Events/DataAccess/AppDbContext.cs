@@ -25,7 +25,6 @@ public class AppDbContext : IdentityDbContext<User,Role,string>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
         modelBuilder.Entity<User>(entity =>
         {
 

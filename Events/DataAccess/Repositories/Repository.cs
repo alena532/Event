@@ -34,7 +34,7 @@ public class Repository : IRepository<Event> {
     
     public IQueryable<Event> GetQuearble(Expression<Func<Event, bool>> filter) 
     {
-        IQueryable<Event> query = _context.Set<Event>().Include(c => c.Company).Include(c => c.Speaker);
+        IQueryable<Event> query = _context.Set<Event>().Include(c => c.Company).Include(c => c.Speaker).AsNoTracking();
         if (filter != null)
         {
             query = query.Where(filter);
@@ -46,7 +46,7 @@ public class Repository : IRepository<Event> {
         => await GetQuearble(filter).ToListAsync();
 
     public async Task<Event> GetByIdAsync(int id)
-        =>await _context.Set<Event>().Where(x => x.Id == id).Include(s=>s.Speaker).Include(s=>s.Company).FirstOrDefaultAsync();
+        => await _context.Set<Event>().Where(x => x.Id == id).Include(s=>s.Speaker).Include(s=>s.Company).FirstOrDefaultAsync();
 
     public async Task<Event> UpdateAsync(Event entity)
     {
